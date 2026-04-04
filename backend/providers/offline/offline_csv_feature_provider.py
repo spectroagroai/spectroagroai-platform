@@ -38,9 +38,7 @@ class OfflineCSVFeatureProvider(BaseFeatureProvider):
             for item in manifest["features"]
         ]
 
-        required_columns = (
-            ["latitude", "longitude"] + self.features
-        )
+        required_columns = ["latitude", "longitude"] + self.features
 
         df = pd.read_csv(
             CSV_PATH,
@@ -63,13 +61,14 @@ class OfflineCSVFeatureProvider(BaseFeatureProvider):
             ["latitude", "longitude"]
         ].to_numpy(dtype=np.float32)
 
-        self.coords_rad = np.radians(self.coords_deg)
+        coords_rad = np.radians(self.coords_deg).astype(np.float32)
 
-        self.index = SpatialIndex(self.coords_rad)
+        self.index = SpatialIndex(coords_rad)
 
-        # Free dataframe memory immediately
+        del coords_rad
         del df
 
+    
     def _build_feature_vector(
         self,
         row_index: int,

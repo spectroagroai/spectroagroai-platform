@@ -58,6 +58,9 @@ class ModelRegistry:
 
             result = model.predict(X)
 
+            if hasattr(model, "_Booster"):
+                del model._Booster
+
             return result
 
         finally:
