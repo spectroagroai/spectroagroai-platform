@@ -1,7 +1,5 @@
 from pathlib import Path
 import os
-from functools import lru_cache
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -29,11 +27,6 @@ app.add_middleware(
 )
 
 
-@lru_cache(maxsize=1)
-def get_runtime():
-    from backend.application.runtime_service_v2 import RuntimeServiceV2
-
-    return RuntimeServiceV2()
 
 
 @app.get("/health")
@@ -47,9 +40,11 @@ def health():
 
 @app.post("/predict", response_model=PredictResponse)
 def predict(request: PredictRequest):
-    try:
-        runtime = get_runtime()
+    from backend.application.runtime_service_v2 import RuntimeServiceV2
 
+    runtime = RuntimeServiceV2()
+
+    try:
         return runtime.predict(
             latitude=request.latitude,
             longitude=request.longitude,
@@ -61,3 +56,9 @@ def predict(request: PredictRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        del runtime
+
+        import gc
+        gc.collect()
