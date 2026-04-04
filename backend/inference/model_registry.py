@@ -1,21 +1,18 @@
 from __future__ import annotations
 
-import gc
 import json
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any
-
-import joblib
-
-from backend.inference.orgc_wrapper import ORGCWrapper
 
 
 class ModelRegistry:
     """
-    Runtime model loader optimized for low-memory deployment.
+    Memory-safe model registry.
 
-    Models are loaded only when needed, used once, then immediately released.
-    No persistent cache is kept in memory.
+    Every prediction runs in a separate subprocess so that model memory
+    is fully released when the subprocess exits.
     """
 
     def __init__(
@@ -27,6 +24,8 @@ class ModelRegistry:
         with open(self.config_path, "r", encoding="utf-8") as f:
             self.registry = json.load(f)
 
+        self.python_exec = sys.executable
+
     def _artifact_path(self, target: str, artifact: str) -> str:
         return self.registry["models"][target]["artifacts"][artifact]
 
@@ -36,48 +35,40 @@ class ModelRegistry:
         artifact: str,
         X,
     ) -> Any:
-        """
-        Load one artifact, run prediction, then free memory immediately.
-        """
         path = self._artifact_path(target, artifact)
 
         if path.endswith(".json"):
             with open(path, "r", encoding="utf-8") as f:
-                obj = json.load(f)
+                return json.load(f)
 
-            return obj
+        payload = {
+            "target": target,
+            "artifact": artifact,
+            "path": path,
+            "columns": list(X.columns),
+            "values": X.iloc[0].tolist(),
+        }
 
-        model = None
+        result = subprocess.run(
+            [
+                self.python_exec,
+                "-m",
+                "backend.inference.subprocess_predictor",
+            ],
+            input=json.dumps(payload),
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
 
-        try:
-            model = joblib.load(path, mmap_mode="r")
+        if result.returncode != 0:
+            raise RuntimeError(
+                "Subprocess prediction failed:\n"
+                f"{result.stderr}\n"
+                f"{result.stdout}"
+            )
 
-            # ORGC special wrapper
-            if target == "lab__ORGC" and artifact == "mu":
-                model = ORGCWrapper(model)
-
-            result = model.predict(X)
-
-            if hasattr(model, "_Booster"):
-                del model._Booster
-
-            return result
-
-        finally:
-            if model is not None:
-                del model
-
-            gc.collect()
-
-    def load_json(
-        self,
-        target: str,
-        artifact: str,
-    ) -> dict:
-        path = self._artifact_path(target, artifact)
-
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        return json.loads(result.stdout)["prediction"]
 
     def list_targets(self):
         return list(self.registry["models"].keys())
