@@ -1,0 +1,5 @@
+{
+  "alpha": 0.2,
+  "q_hat": 1.0101150866019992,
+  "note": "Inference interval: [p10_mono - q_hat, p90_mono + q_hat]"
+}

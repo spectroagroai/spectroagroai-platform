@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow: hidden;
+  font-family: Inter, system-ui, sans-serif;
+  background: #03070c;
+}
+
+.leaflet-container {
+  background: #050a10;
+}
+
+.leaflet-control-attribution {
+  display: none;
+}

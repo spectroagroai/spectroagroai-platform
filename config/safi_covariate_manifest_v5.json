@@ -1,0 +1,634 @@
+{
+  "manifest_version": "safi_covariate_v5",
+  "total_features": 157,
+  "features": [
+    {
+      "feature_id": "CLAY",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "PHAQ",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "SAND",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "SILT",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "depth_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "depth_thickness",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "sand_to_clay_ratio",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "silt_to_clay_ratio",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "texture_index",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "acidity_normalized",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "agri_weight",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "composite_weight",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDMI_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDMI_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDMI_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDVI_intercept",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDVI_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDVI_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDVI_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "NDVI_trend",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "SAVI_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "SAVI_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "SAVI_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "aspect",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "elevation",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "plan_curv",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "tpi_1000m",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "tpi_300m",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_pr_annual_mm_2000_2017",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m01",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m03",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m04",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m05",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m06",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m07",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m09",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m11",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "pr_mm_m12",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "t2m_c_m05",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "t2m_c_m08",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "t2m_c_m09",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "_era5_nn_dist_m",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_d2m_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_skt_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_sp_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_u10_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_u10_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_u10_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_u10_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_u10_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_u10_max",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_v10_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_v10_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_v10_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_v10_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_v10_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_v10_max",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_e_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_e_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_e_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_e_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_e_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ro_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ro_p50",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ro_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_tp_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_tp_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_tp_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_tp_p50",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_tp_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_tp_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_tp_max",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ssr_mean_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ssr_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ssr_min_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ssr_max_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ssrd_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_ssrd_max_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_str_mean_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_str_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_str_p10_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_str_p50_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_str_p90_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_str_min_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_str_max_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_strd_mean_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_strd_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_strd_p10_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_strd_p50_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_strd_p90_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_strd_max_Jm2",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_p50",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_max",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl2_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl2_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl2_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl2_p50",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl2_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl2_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl2_max",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_p50",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_max",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_std",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_p10",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_p50",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_p90",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_min",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_max",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_t2m_mean_c",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_d2m_mean_c",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_d2m_max_c",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_skt_p50_c",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_stl1_max_c",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_sp_mean_hpa",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_sp_p10_hpa",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_sp_p50_hpa",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_sp_p90_hpa",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_sp_min_hpa",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_sp_max_hpa",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_wind_speed_mean_ms",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_mean_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_p10_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_p50_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_p90_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_min_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl1_max_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_mean_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_p10_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_p50_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_p90_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_min_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "era5_swvl2_max_vfrac",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "gldas_rootzone_sm_sum_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "gldas_sm_0_10_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "gldas_sm_100_200_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "gldas_sm_10_40_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "gldas_sm_40_100_mean",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "landcover_mode_2001_2017_lc_type1",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "lithology_code",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "chelsa_bio1",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "chelsa_bio4",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "chelsa_bio12",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "chelsa_bio15",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "npp_mean_2001_2017",
+      "data_type": "continuous"
+    },
+    {
+      "feature_id": "npp_std_2001_2017",
+      "data_type": "continuous"
+    }
+  ]
+}

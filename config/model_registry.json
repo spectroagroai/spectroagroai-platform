@@ -1,0 +1,36 @@
+{
+  "manifest_version": "safi_covariate_v5",
+  "sklearn_version": "1.6.1",
+  "models": {
+    "lab__CECPH7": {
+      "type": "quantile_conformal",
+      "artifacts": {
+        "p10": "artifacts/models/cecph7/lab__CECPH7_p10.joblib",
+        "p50": "artifacts/models/cecph7/lab__CECPH7_p50.joblib",
+        "p90": "artifacts/models/cecph7/lab__CECPH7_p90.joblib",
+        "conformal": "artifacts/models/cecph7/lab__CECPH7_conformal_interval.json"
+      }
+    },
+    "lab__ORGC": {
+      "type": "point_with_wrapper",
+      "artifacts": {
+        "mu": "artifacts/models/orgc/mu_model_fullfit.joblib"
+      }
+    },
+    "lab__BDFIOD": {
+      "type": "mean_sigma",
+      "artifacts": {
+        "mu": "artifacts/models/bdfiod/mu_bayesridge_pipeline.pkl",
+        "sigma": "artifacts/models/bdfiod/sigma_ridge_pipeline.pkl"
+      }
+    },
+    "lab__TOTC": {
+      "type": "regime_quantile",
+      "artifacts": {
+        "global_q05": "artifacts/models/totc/global_q05_log1p_pipeline.pkl",
+        "global_q50": "artifacts/models/totc/global_q50_log1p_pipeline.pkl",
+        "global_q95": "artifacts/models/totc/global_q95_log1p_pipeline.pkl"
+      }
+    }
+  }
+}
