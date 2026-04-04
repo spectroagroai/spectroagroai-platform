@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import gc
 import json
 from pathlib import Path
+from typing import Any
 
 import joblib
 
@@ -10,7 +12,10 @@ from backend.inference.orgc_wrapper import ORGCWrapper
 
 class ModelRegistry:
     """
-    Loads SAFI model artifacts lazily and caches them.
+    Runtime model loader optimized for low-memory deployment.
+
+    Models are loaded only when needed, used once, then immediately released.
+    No persistent cache is kept in memory.
     """
 
     def __init__(
@@ -22,28 +27,54 @@ class ModelRegistry:
         with open(self.config_path, "r", encoding="utf-8") as f:
             self.registry = json.load(f)
 
-        self._cache: dict[str, object] = {}
+    def _artifact_path(self, target: str, artifact: str) -> str:
+        return self.registry["models"][target]["artifacts"][artifact]
 
-    def get(self, target: str, artifact: str):
-        key = f"{target}:{artifact}"
-
-        if key in self._cache:
-            return self._cache[key]
-
-        path = self.registry["models"][target]["artifacts"][artifact]
+    def predict(
+        self,
+        target: str,
+        artifact: str,
+        X,
+    ) -> Any:
+        """
+        Load one artifact, run prediction, then free memory immediately.
+        """
+        path = self._artifact_path(target, artifact)
 
         if path.endswith(".json"):
             with open(path, "r", encoding="utf-8") as f:
                 obj = json.load(f)
-        else:
-            obj = joblib.load(path, mmap_mode="r")
 
-        # Special runtime adaptation for ORGC
-        if target == "lab__ORGC" and artifact == "mu":
-            obj = ORGCWrapper(obj)
+            return obj
 
-        self._cache[key] = obj
-        return obj
+        model = None
+
+        try:
+            model = joblib.load(path, mmap_mode="r")
+
+            # ORGC special wrapper
+            if target == "lab__ORGC" and artifact == "mu":
+                model = ORGCWrapper(model)
+
+            result = model.predict(X)
+
+            return result
+
+        finally:
+            if model is not None:
+                del model
+
+            gc.collect()
+
+    def load_json(
+        self,
+        target: str,
+        artifact: str,
+    ) -> dict:
+        path = self._artifact_path(target, artifact)
+
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
 
     def list_targets(self):
         return list(self.registry["models"].keys())

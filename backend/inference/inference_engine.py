@@ -106,12 +106,12 @@ class InferenceEngine:
             )
 
         # CECPH7
-        cec_p10 = self.registry.get("lab__CECPH7", "p10").predict(X)[0]
-        cec_p50 = self.registry.get("lab__CECPH7", "p50").predict(X)[0]
-        cec_p90 = self.registry.get("lab__CECPH7", "p90").predict(X)[0]
+        cec_p10 = self.registry.predict("lab__CECPH7", "p10", X)[0]
+        cec_p50 = self.registry.predict("lab__CECPH7", "p50", X)[0]
+        cec_p90 = self.registry.predict("lab__CECPH7", "p90", X)[0]
 
         # ORGC
-        orgc_mu = self.registry.get("lab__ORGC", "mu").predict(X)[0]
+        orgc_mu = self.registry.predict("lab__ORGC", "mu", X)[0]
 
         # Placeholder interval until Mondrian calibration is connected
         orgc_lower = orgc_mu - 1.0
@@ -123,13 +123,13 @@ class InferenceEngine:
         orgm_upper = orgc_upper * 1.724
 
         # BDFIOD
-        bdf_mu = self.registry.get("lab__BDFIOD", "mu").predict(X)[0]
-        bdf_sigma = self.registry.get("lab__BDFIOD", "sigma").predict(X)[0]
+        bdf_mu = self.registry.predict("lab__BDFIOD", "mu", X)[0]
+        bdf_sigma = self.registry.predict("lab__BDFIOD", "sigma", X)[0]
 
         # TOTC
-        totc_q05 = self.registry.get("lab__TOTC", "global_q05").predict(X)[0]
-        totc_q50 = self.registry.get("lab__TOTC", "global_q50").predict(X)[0]
-        totc_q95 = self.registry.get("lab__TOTC", "global_q95").predict(X)[0]
+        totc_q05 = self.registry.predict("lab__TOTC", "global_q05", X)[0]
+        totc_q50 = self.registry.predict("lab__TOTC", "global_q50", X)[0]
+        totc_q95 = self.registry.predict("lab__TOTC", "global_q95", X)[0]
 
         metadata = {
             "manifest_version": "safi_covariate_v5",
@@ -142,7 +142,9 @@ class InferenceEngine:
                     "source": feature_input.source,
                     "coordinates": feature_input.coordinates,
                     "effective_coordinates": feature_input.effective_coordinates,
-                    "valid_feature_count": int(feature_input.validity_mask.sum()),
+                    "valid_feature_count": sum(
+                        1 for v in feature_input.validity_mask.values() if v
+                    ),
                 }
             )
 
