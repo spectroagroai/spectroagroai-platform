@@ -165,3 +165,8 @@ From these questions, SAFI emerged as an attempt to create a Digital Soil Labora
 - Locations outside the environmental domain of the training dataset may produce lower-confidence results.
 - SAFI is intended for screening and comparison, not as a replacement for field sampling and laboratory measurements.
 
+## Citation
+
+If you use this project in research, publications, software, presentations, or derivative work, you must credit:
+
+Hussein Hadi Abbas. SpectroAgro Fusion AI Index (SAFI), 2026.
