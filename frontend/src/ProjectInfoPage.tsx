@@ -348,6 +348,36 @@ export default function ProjectInfoPage() {
             <li>SAFI is intended for screening and comparison, not as a replacement for field sampling and laboratory measurements.</li>
           </ul>
         </section>
+            <p className="text-justify leading-8 text-slate-300">
+            SAFI was developed by Hussein Hadi Abbas, a Surveying Engineer graduated from
+            the Middle Technical University, Iraq, with a research background in remote
+            sensing, GIS, and AI-driven geospatial analysis. He also holds a Master’s
+            degree in Map (Geomatics) Engineering from Erciyes University, Türkiye.
+            </p>
+
+            <p className="mt-4 text-justify leading-8 text-slate-300">
+            The idea behind SAFI began in 2022 during a discussion about a privately
+            owned agricultural farm. The central question was whether it would be
+            possible to infer the essential characteristics of land without relying
+            entirely on expensive and time-consuming laboratory testing.
+            </p>
+
+            <p className="mt-4 text-justify leading-8 text-slate-300">
+            The discussion gradually evolved into a broader scientific problem: if a
+            person intends to purchase or cultivate a piece of land, what are the minimum
+            indicators required to determine whether that land is suitable for
+            agriculture? Could soil laboratory properties be estimated from satellite
+            observations, climate, terrain, and environmental context? And could these
+            estimates be transformed into a simple, interpretable indicator expressing
+            the overall suitability of the land?
+            </p>
+
+            <p className="mt-4 text-justify leading-8 text-slate-300">
+            From these questions, SAFI emerged as an attempt to create a Digital Soil
+            Laboratory and a Land Suitability Index capable of translating complex
+            environmental information into practical guidance for agricultural planning
+            and decision-making.
+            </p>
       </div>
     </div>
   )
