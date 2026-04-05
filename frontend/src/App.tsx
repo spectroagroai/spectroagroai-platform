@@ -1,9 +1,13 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+import ProjectInfoPage from './ProjectInfoPage'
+
 import { Header } from './components/shared/Header'
 import { MapView } from './components/map/MapView'
 import { ResultsSidebar } from './components/sidebar/ResultsSidebar'
 import { SoilPropertyAnalytics } from './components/sidebar/SoilPropertyAnalytics'
 
-export default function App() {
+function PlatformPage() {
   return (
     <div className="h-screen overflow-hidden bg-[#03070c] text-slate-100">
       <div className="flex h-full flex-col gap-2 p-2">
@@ -24,5 +28,16 @@ export default function App() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ProjectInfoPage />} />
+        <Route path="/app" element={<PlatformPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }

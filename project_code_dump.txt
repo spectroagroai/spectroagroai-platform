@@ -168,52 +168,6 @@ FILE: backend\application\__init__.py
 
 
 ====================================================================================================
-FILE: backend\application\runtime_service.py
-====================================================================================================
-
-from backend.providers.offline.offline_csv_feature_provider import (
-    OfflineCSVFeatureProvider,
-)
-from backend.inference.inference_engine import InferenceEngine
-from backend.core.domain_assessor import DomainAssessor
-from backend.core.runtime_mode_engine import RuntimeModeEngine
-
-
-class RuntimeService:
-    def __init__(self):
-        self.provider = OfflineCSVFeatureProvider()
-        self.engine = InferenceEngine()
-        self.domain = DomainAssessor()
-        self.mode_engine = RuntimeModeEngine()
-
-    def predict(self, latitude, longitude, mode="baseline"):
-        fv = self.provider.get_by_coordinates(latitude, longitude)
-
-        if isinstance(fv.values, dict):
-            feature_dict = fv.values
-        else:
-            feature_dict = {
-                name: fv.values[idx]
-                for idx, name in enumerate(self.engine.feature_names)
-            }
-
-        result = self.engine.predict(feature_dict)
-
-        domain_info = self.domain.assess(fv, result)
-
-        result["domain"] = domain_info
-
-        result = self.mode_engine.apply(result, mode=mode)
-
-        result["metadata"] = result.get("metadata", {})
-        result["metadata"]["requested_coordinates"] = fv.coordinates
-        result["metadata"]["effective_coordinates"] = (
-            fv.effective_coordinates
-        )
-
-        return result
-
-====================================================================================================
 FILE: backend\application\runtime_service_v2.py
 ====================================================================================================
 
@@ -823,7 +777,6 @@ FILE: backend\inference\inference_engine.py
 
 from __future__ import annotations
 
-import gc
 import json
 from pathlib import Path
 from typing import Any
@@ -837,6 +790,7 @@ from backend.inference.domain_validator import DomainValidator
 from backend.inference.model_registry import ModelRegistry
 from backend.inference.uncertainty_engine import UncertaintyEngine
 from backend.providers.feature_vector import FeatureVector
+
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST_PATH = ROOT / "config" / "safi_covariate_manifest_v5.json"
@@ -864,6 +818,14 @@ class InferenceEngine:
         self,
         feature_input: dict[str, Any] | FeatureVector,
     ) -> dict[str, Any]:
+        """
+        Accept either:
+        - raw SAFI feature dict
+        - FeatureVector from any provider
+
+        Always return canonical feature dictionary in exact manifest order.
+        """
+
         if isinstance(feature_input, FeatureVector):
             if len(feature_input.values) != len(self.features):
                 raise ValueError(
@@ -920,47 +882,31 @@ class InferenceEngine:
                 "Domain validation failed:\n" + "\n".join(errors)
             )
 
-        print("[SAFI] Running CECPH7 p50 only...")
-        cec_model = self.registry.get("lab__CECPH7", "p50")
-        cec_p50 = float(cec_model.predict(X)[0])
-        del cec_model
-        gc.collect()
+        # CECPH7
+        cec_p10 = self.registry.get("lab__CECPH7", "p10").predict(X)[0]
+        cec_p50 = self.registry.get("lab__CECPH7", "p50").predict(X)[0]
+        cec_p90 = self.registry.get("lab__CECPH7", "p90").predict(X)[0]
 
-        cec_p10 = cec_p50 - 2.0
-        cec_p90 = cec_p50 + 2.0
+        # ORGC
+        orgc_mu = self.registry.get("lab__ORGC", "mu").predict(X)[0]
 
-        print("[SAFI] Running ORGC...")
-        orgc_model = self.registry.get("lab__ORGC", "mu")
-        orgc_mu = float(orgc_model.predict(X)[0])
-        del orgc_model
-        gc.collect()
-
+        # Placeholder interval until Mondrian calibration is connected
         orgc_lower = orgc_mu - 1.0
         orgc_upper = orgc_mu + 1.5
 
+        # ORGM derived deterministically from ORGC
         orgm_mu = orgc_mu * 1.724
         orgm_lower = orgc_lower * 1.724
         orgm_upper = orgc_upper * 1.724
 
-        print("[SAFI] Running BDFIOD...")
-        bdf_mu_model = self.registry.get("lab__BDFIOD", "mu")
-        bdf_mu = float(bdf_mu_model.predict(X)[0])
-        del bdf_mu_model
-        gc.collect()
+        # BDFIOD
+        bdf_mu = self.registry.get("lab__BDFIOD", "mu").predict(X)[0]
+        bdf_sigma = self.registry.get("lab__BDFIOD", "sigma").predict(X)[0]
 
-        bdf_sigma_model = self.registry.get("lab__BDFIOD", "sigma")
-        bdf_sigma = float(bdf_sigma_model.predict(X)[0])
-        del bdf_sigma_model
-        gc.collect()
-
-        print("[SAFI] Running TOTC q50 only...")
-        totc_model = self.registry.get("lab__TOTC", "global_q50")
-        totc_q50 = float(totc_model.predict(X)[0])
-        del totc_model
-        gc.collect()
-
-        totc_q05 = totc_q50 * 0.8
-        totc_q95 = totc_q50 * 1.2
+        # TOTC
+        totc_q05 = self.registry.get("lab__TOTC", "global_q05").predict(X)[0]
+        totc_q50 = self.registry.get("lab__TOTC", "global_q50").predict(X)[0]
+        totc_q95 = self.registry.get("lab__TOTC", "global_q95").predict(X)[0]
 
         metadata = {
             "manifest_version": "safi_covariate_v5",
@@ -968,21 +914,12 @@ class InferenceEngine:
         }
 
         if isinstance(feature_input, FeatureVector):
-            if hasattr(feature_input.validity_mask, "sum"):
-                valid_feature_count = int(feature_input.validity_mask.sum())
-            elif isinstance(feature_input.validity_mask, dict):
-                valid_feature_count = sum(
-                    1 for v in feature_input.validity_mask.values() if v
-                )
-            else:
-                valid_feature_count = len(self.features)
-
             metadata.update(
                 {
                     "source": feature_input.source,
                     "coordinates": feature_input.coordinates,
                     "effective_coordinates": feature_input.effective_coordinates,
-                    "valid_feature_count": valid_feature_count,
+                    "valid_feature_count": int(feature_input.validity_mask.sum()),
                 }
             )
 
@@ -1033,8 +970,6 @@ class InferenceEngine:
 
         lsi = LSIEngine.compute(predictions)
 
-        gc.collect()
-
         return {
             "metadata": metadata,
             "predictions": predictions,
@@ -1048,6 +983,19 @@ class InferenceEngine:
         rows: list[dict[str, Any] | FeatureVector],
     ) -> list[dict[str, Any]]:
         return [self.predict(row) for row in rows]
+
+
+if __name__ == "__main__":
+    engine = InferenceEngine()
+
+    dummy = {feature: 0.0 for feature in engine.features}
+
+    result = engine.predict(dummy)
+
+    import pprint
+
+    pprint.pprint(result)
+
 
 ====================================================================================================
 FILE: backend\inference\model_registry.py
@@ -1895,71 +1843,6 @@ class RasterFeatureProvider(BaseFeatureProvider):
             value = value + add_offset
 
         return value
-
-====================================================================================================
-FILE: backend\utils\memory_loader.py
-====================================================================================================
-
-from functools import lru_cache
-from pathlib import Path
-import gc
-import joblib
-import pandas as pd
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-MODELS_DIR = PROJECT_ROOT / "artifacts" / "models"
-REFERENCE_DIR = PROJECT_ROOT / "artifacts" / "reference"
-
-
-@lru_cache(maxsize=2)
-def load_model(relative_path: str):
-    """
-    Lazy-load a model only when needed and keep at most 2 models in memory.
-    Example:
-        model = load_model("cecph7/lab__CECPH7_pipeline.pkl")
-    """
-    full_path = MODELS_DIR / relative_path
-    print(f"[SAFI] Loading model lazily: {full_path}")
-    return joblib.load(full_path)
-
-
-@lru_cache(maxsize=1)
-def load_universe():
-    """
-    Load the SAFI universe with reduced RAM usage.
-    """
-    path = REFERENCE_DIR / "safi_v1_universe.csv"
-
-    print(f"[SAFI] Loading universe: {path}")
-
-    df = pd.read_csv(
-        path,
-        low_memory=True,
-    )
-
-    # Reduce RAM usage aggressively
-    float_cols = df.select_dtypes(include=["float64"]).columns
-    int_cols = df.select_dtypes(include=["int64"]).columns
-
-    df[float_cols] = df[float_cols].astype("float32")
-    df[int_cols] = df[int_cols].astype("int32")
-
-    print(
-        f"[SAFI] Universe loaded with shape {df.shape}. "
-        f"Memory = {round(df.memory_usage(deep=True).sum() / 1024**2, 1)} MB"
-    )
-
-    return df
-
-
-def clear_safi_cache():
-    """
-    Optional: clear model cache after a prediction if Render RAM is still too high.
-    """
-    load_model.cache_clear()
-    gc.collect()
-    print("[SAFI] Model cache cleared")
-
 
 ====================================================================================================
 FILE: config\model_registry.json
@@ -7748,6 +7631,98 @@ export default defineConfig({
   plugins: [react()],
 })
 
+
+====================================================================================================
+FILE: profile_memory_usage.py
+====================================================================================================
+
+from pathlib import Path
+import gc
+import os
+
+import joblib
+import pandas as pd
+import psutil
+
+from pathlib import Path
+PROJECT_ROOT = Path(__file__).resolve().parent
+
+REFERENCE_CSV = PROJECT_ROOT / "artifacts/reference/safi_v1_universe.csv"
+
+MODELS = {
+    "CECPH7_p10": PROJECT_ROOT / "artifacts/models/cecph7/lab__CECPH7_p10.joblib",
+    "CECPH7_p50": PROJECT_ROOT / "artifacts/models/cecph7/lab__CECPH7_p50.joblib",
+    "CECPH7_p90": PROJECT_ROOT / "artifacts/models/cecph7/lab__CECPH7_p90.joblib",
+
+    "ORGC_mu": PROJECT_ROOT / "artifacts/models/orgc/mu_model_fullfit.joblib",
+
+    "BDFIOD_mu": PROJECT_ROOT / "artifacts/models/bdfiod/mu_bayesridge_pipeline.pkl",
+    "BDFIOD_sigma": PROJECT_ROOT / "artifacts/models/bdfiod/sigma_ridge_pipeline.pkl",
+
+    "TOTC_low_q05": PROJECT_ROOT / "artifacts/models/totc/regime_low_q05_log1p_pipeline.pkl",
+    "TOTC_low_q50": PROJECT_ROOT / "artifacts/models/totc/regime_low_q50_log1p_pipeline.pkl",
+    "TOTC_low_q95": PROJECT_ROOT / "artifacts/models/totc/regime_low_q95_log1p_pipeline.pkl",
+    "TOTC_mid_q05": PROJECT_ROOT / "artifacts/models/totc/regime_mid_q05_log1p_pipeline.pkl",
+    "TOTC_mid_q50": PROJECT_ROOT / "artifacts/models/totc/regime_mid_q50_log1p_pipeline.pkl",
+    "TOTC_mid_q95": PROJECT_ROOT / "artifacts/models/totc/regime_mid_q95_log1p_pipeline.pkl",
+    "TOTC_high_q05": PROJECT_ROOT / "artifacts/models/totc/regime_high_q05_log1p_pipeline.pkl",
+    "TOTC_high_q50": PROJECT_ROOT / "artifacts/models/totc/regime_high_q50_log1p_pipeline.pkl",
+    "TOTC_high_q95": PROJECT_ROOT / "artifacts/models/totc/regime_high_q95_log1p_pipeline.pkl",
+}
+
+process = psutil.Process(os.getpid())
+
+
+def mem_mb():
+    return process.memory_info().rss / 1024**2
+
+
+print("=" * 80)
+print("SAFI MEMORY PROFILE")
+print("=" * 80)
+
+base = mem_mb()
+print(f"Initial memory: {base:.1f} MB")
+
+print("\nLoading universe CSV...")
+
+df = pd.read_csv(REFERENCE_CSV, low_memory=True)
+
+float_cols = df.select_dtypes(include=["float64"]).columns
+int_cols = df.select_dtypes(include=["int64"]).columns
+
+df[float_cols] = df[float_cols].astype("float32")
+df[int_cols] = df[int_cols].astype("int32")
+
+after_csv = mem_mb()
+print(f"After CSV load: {after_csv:.1f} MB")
+print(f"CSV memory cost: {after_csv - base:.1f} MB")
+
+loaded = {}
+
+for name, path in MODELS.items():
+    before = mem_mb()
+    print(f"\nLoading {name} ...")
+
+    loaded[name] = joblib.load(path)
+
+    after = mem_mb()
+
+    print(f"Memory after load: {after:.1f} MB")
+    print(f"Approx model cost: {after - before:.1f} MB")
+
+print("\n" + "=" * 80)
+print(f"TOTAL MEMORY AFTER ALL MODELS: {mem_mb():.1f} MB")
+print("=" * 80)
+
+print("\nNow freeing objects...\n")
+
+loaded.clear()
+del df
+
+gc.collect()
+
+print(f"Memory after cleanup: {mem_mb():.1f} MB")
 
 ====================================================================================================
 FILE: README.md
