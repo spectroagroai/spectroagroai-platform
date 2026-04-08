@@ -143,6 +143,12 @@ These dynamically extracted variables will then be passed directly into the exis
 
 This approach is expected to produce more accurate, location-specific and up-to-date soil predictions and Land Suitability Index estimates than the current nearest-neighbor method.
 
+Another major future objective is to continuously improve the accuracy and scientific robustness of SAFI by expanding the soil laboratory database. The project aims to collect and integrate substantially more real soil laboratory analyses from as many countries and regions as possible. Each additional national dataset will provide new examples of local soil conditions, allowing the models to better represent geographic variability, reduce uncertainty, and improve prediction quality in underrepresented areas.
+
+The long-term goal is for SAFI to evolve into a progressively self-improving global soil intelligence platform. As more countries contribute laboratory observations, the system will be retrained to increase the precision of the current soil-property predictions and to support additional laboratory variables beyond the current set, including new chemical, physical, and fertility-related soil indicators.
+
+Future versions of SAFI are also intended to include a more advanced sustainability and agricultural potential index. Instead of relying only on the currently predicted soil variables, the future index will integrate a broader set of environmental, climatic, hydrological, ecological, and land management factors. This richer information will allow SAFI to provide a more comprehensive evaluation of long-term agricultural sustainability, crop suitability, environmental risk, and land-development potential.
+
 ---
 
 # About the Researcher
